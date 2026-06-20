@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Милана — Сайты с воронкой продаж</title>
+<style>
+  :root{
+    --pink-1:#FFE4ED;
+    --pink-2:#FFB8D2;
+    --pink-3:#FF8FB3;
+    --blue-1:#E6F3FF;
+    --blue-2:#B9E0FF;
+    --blue-3:#8FCBFF;
+    --ink:#2B2640;
+    --ink-soft:#6B6580;
+    --white:#FFFFFF;
+    --glass: rgba(255,255,255,0.55);
+    --radius-lg: 28px;
+    --radius-md: 20px;
+    --radius-sm: 14px;
+    --shadow-soft: 0 20px 50px -20px rgba(150,120,200,0.35);
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display","SF Pro Text","Helvetica Neue",Arial,sans-serif;
+    color:var(--ink);
+    background: linear-gradient(180deg, var(--pink-1) 0%, var(--blue-1) 35%, #FFFFFF 70%);
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* Ambient blobs — контейнер абсолютно позиционирован (НЕ fixed),
+     чтобы избежать известного бага WebKit/iOS Safari: position:fixed + filter:blur
+     ломает композитинг страницы и блокирует рендер/скролл секций ниже первого экрана. */
+  html, body{
+    height:auto;
+    min-height:100%;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  body{position:relative;}
+  .bg-decor{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:640px;
+    overflow:hidden;
+    z-index:-1;
+    pointer-events:none;
+  }
+  .blob{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(60px);
+    opacity:0.5;
+    animation: float 14s ease-in-out infinite;
+    will-change:transform;
+  }
+  .blob.b1{width:340px;height:340px;background:var(--pink-2);top:-100px;left:-80px;}
+  .blob.b2{width:280px;height:280px;background:var(--blue-2);top:200px;right:-100px;animation-delay:-4s;}
+  .blob.b3{width:240px;height:240px;background:var(--pink-3);bottom:0;left:40%;animation-delay:-8s;opacity:0.3;}
+
+  @keyframes float{
+    0%,100%{transform:translateY(0) translateX(0);}
+    50%{transform:translateY(30px) translateX(20px);}
+  }
+
+  .wrap{max-width:920px;margin:0 auto;padding:0 22px;}
+
+  /* Reveal-on-scroll */
+  .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.22,1,.36,1), transform .7s cubic-bezier(.22,1,.36,1);}
+  .reveal.in{opacity:1;transform:translateY(0);}
+
+  /* ===== HERO ===== */
+  .hero{
+    padding:120px 0 80px;
+    text-align:center;
+    position:relative;
+  }
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:var(--glass);
+    backdrop-filter:blur(14px);
+    border:1px solid rgba(255,255,255,0.6);
+    padding:8px 16px;
+    border-radius:999px;
+    font-size:13px;
+    color:var(--ink-soft);
+    margin-bottom:28px;
+    box-shadow:var(--shadow-soft);
+    animation: pop .6s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  .badge .dot{width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,var(--pink-3),var(--blue-3));animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(1.4);opacity:.6;}}
+  @keyframes pop{from{opacity:0;transform:translateY(-10px) scale(.9);}to{opacity:1;transform:translateY(0) scale(1);}}
+
+  h1{
+    font-size:44px;
+    line-height:1.15;
+    letter-spacing:-0.5px;
+    margin:0 0 20px;
+    font-weight:700;
+    background:linear-gradient(120deg,#3A3454 10%, #6C5B8C 50%, #3A3454 90%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    animation: rise .8s cubic-bezier(.22,1,.36,1) both;
+    animation-delay:.05s;
+  }
+  .sub{
+    font-size:18px;
+    color:var(--ink-soft);
+    max-width:560px;
+    margin:0 auto 36px;
+    line-height:1.6;
+    animation: rise .8s cubic-bezier(.22,1,.36,1) both;
+    animation-delay:.15s;
+  }
+  @keyframes rise{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+  .btn-primary{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:linear-gradient(135deg,var(--pink-3),var(--blue-3));
+    color:#fff;
+    font-size:17px;
+    font-weight:600;
+    padding:16px 34px;
+    border:none;
+    border-radius:999px;
+    cursor:pointer;
+    box-shadow:0 14px 30px -8px rgba(255,140,180,0.55);
+    transition:transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .25s;
+    animation: rise .8s cubic-bezier(.22,1,.36,1) both;
+    animation-delay:.25s;
+  }
+  .btn-primary:active{transform:scale(.96);}
+  .btn-primary:hover{transform:translateY(-3px);box-shadow:0 18px 36px -8px rgba(255,140,180,0.65);}
+
+  /* iOS-style phone mock */
+  .phone-mock{
+    margin:60px auto 0;
+    width:230px;
+    height:470px;
+    background:linear-gradient(160deg,#fff,#F4F7FF);
+    border-radius:46px;
+    border:6px solid #fff;
+    box-shadow:var(--shadow-soft), 0 0 0 1px rgba(150,130,200,0.15) inset;
+    position:relative;
+    animation: floatPhone 5s ease-in-out infinite, rise .9s cubic-bezier(.22,1,.36,1) both;
+    animation-delay:0s, .35s;
+  }
+  @keyframes floatPhone{0%,100%{transform:translateY(0) rotate(-1.5deg);}50%{transform:translateY(-14px) rotate(1.5deg);}}
+  .phone-mock .notch{position:absolute;top:14px;left:50%;transform:translateX(-50%);width:80px;height:18px;background:#1c1c1e;border-radius:12px;}
+  .phone-mock .bubble{
+    position:absolute;
+    border-radius:18px;
+    padding:10px 14px;
+    font-size:12px;
+    box-shadow:0 8px 18px -6px rgba(120,100,180,0.25);
+  }
+  .phone-mock .bubble.b-blue{top:60px;left:18px;right:50px;background:var(--blue-2);color:#1c3a52;border-bottom-left-radius:4px;}
+  .phone-mock .bubble.b-pink{top:110px;left:50px;right:18px;background:linear-gradient(135deg,var(--pink-3),#ffb0cb);color:#fff;border-bottom-right-radius:4px;}
+  .phone-mock .bubble.b-blue2{top:160px;left:18px;right:70px;background:var(--blue-1);color:#1c3a52;border-bottom-left-radius:4px;}
+  .phone-mock .cta-pill{
+    position:absolute;bottom:24px;left:18px;right:18px;
+    background:linear-gradient(135deg,var(--pink-3),var(--blue-3));
+    color:#fff;text-align:center;font-size:13px;font-weight:600;
+    padding:13px 0;border-radius:999px;
+    box-shadow:0 10px 22px -6px rgba(255,140,180,0.5);
+  }
+
+  /* ===== TRUST NUMBERS ===== */
+  .stats{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:16px;
+    padding:50px 0;
+  }
+  .stat-card{
+    background:var(--glass);
+    backdrop-filter:blur(14px);
+    border:1px solid rgba(255,255,255,0.7);
+    border-radius:var(--radius-md);
+    padding:24px 18px;
+    text-align:center;
+    box-shadow:var(--shadow-soft);
+  }
+  .stat-card .num{font-size:28px;font-weight:700;color:var(--ink);margin-bottom:4px;background:linear-gradient(120deg,#FF8FB3,#8FCBFF);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .stat-card .label{font-size:13px;color:var(--ink-soft);line-height:1.4;}
+
+  /* ===== SECTIONS GENERIC ===== */
+  section{padding:64px 0;}
+  .section-card{
+    background:var(--glass);
+    backdrop-filter:blur(14px);
+    border:1px solid rgba(255,255,255,0.6);
+    border-radius:var(--radius-lg);
+    padding:40px 32px;
+    box-shadow:var(--shadow-soft);
+  }
+  .eyebrow{
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    color:var(--blue-3);
+    margin-bottom:10px;
+  }
+  h2{
+    font-size:30px;
+    font-weight:700;
+    letter-spacing:-0.3px;
+    margin:0 0 16px;
+    color:var(--ink);
+  }
+  p.lead{font-size:16px;color:var(--ink-soft);line-height:1.7;max-width:620px;}
+
+  /* Pain section list */
+  .pain-card{
+    background:var(--white);
+    border-radius:var(--radius-lg);
+    padding:36px 30px;
+    box-shadow:var(--shadow-soft);
+    margin-top:24px;
+  }
+  .pain-list{list-style:none;margin:20px 0 0;padding:0;display:grid;gap:12px;}
+  .pain-list li{
+    display:flex;align-items:flex-start;gap:10px;
+    font-size:15px;color:var(--ink-soft);
+    background:linear-gradient(90deg,var(--pink-1),transparent);
+    padding:12px 14px;border-radius:var(--radius-sm);
+  }
+  .pain-list li::before{content:"";flex-shrink:0;width:6px;height:6px;border-radius:50%;background:var(--pink-3);margin-top:7px;}
+
+  /* Solution checklist */
+  .checklist{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px;}
+  .check-item{
+    display:flex;align-items:center;gap:10px;
+    background:var(--white);
+    border-radius:var(--radius-sm);
+    padding:14px 16px;
+    font-size:14px;
+    box-shadow:0 8px 20px -10px rgba(150,130,200,0.3);
+  }
+  .check-item .tick{
+    width:22px;height:22px;border-radius:50%;
+    background:linear-gradient(135deg,var(--pink-3),var(--blue-3));
+    display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;flex-shrink:0;
+  }
+
+  /* About */
+  .about-card{
+    display:flex;gap:24px;align-items:center;
+    background:linear-gradient(135deg,var(--white), var(--blue-1));
+    border-radius:var(--radius-lg);
+    padding:32px;
+    box-shadow:var(--shadow-soft);
+  }
+  .avatar{
+    width:84px;height:84px;border-radius:50%;
+    background:linear-gradient(135deg,var(--pink-2),var(--blue-2));
+    display:flex;align-items:center;justify-content:center;
+    font-size:30px;font-weight:700;color:#fff;flex-shrink:0;
+    box-shadow:0 10px 24px -8px rgba(255,140,180,0.5);
+  }
+
+  /* Cases */
+  .case-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:24px;}
+  .case-card{
+    background:var(--white);
+    border-radius:var(--radius-md);
+    padding:20px;
+    box-shadow:0 10px 26px -12px rgba(150,130,200,0.35);
+    transition:transform .3s cubic-bezier(.22,1,.36,1);
+  }
+  .case-card:hover{transform:translateY(-6px);}
+  .case-card .ph{height:90px;border-radius:var(--radius-sm);background:linear-gradient(135deg,var(--pink-1),var(--blue-1));margin-bottom:12px;}
+  .case-card .tag{font-size:12px;color:var(--blue-3);font-weight:600;}
+  .case-card .res{font-size:14px;color:var(--ink-soft);margin-top:4px;}
+
+  /* Audience pills */
+  .pill-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px;}
+  .pill{
+    background:var(--white);
+    border:1px solid var(--blue-2);
+    border-radius:999px;
+    padding:10px 18px;
+    font-size:14px;
+    color:var(--ink);
+    box-shadow:0 6px 16px -8px rgba(150,130,200,0.25);
+  }
+
+  /* Why-cards */
+  .why-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px;}
+  .why-card{
+    background:var(--white);
+    border-radius:var(--radius-md);
+    padding:22px;
+    box-shadow:0 10px 26px -12px rgba(150,130,200,0.3);
+  }
+  .why-card .icon{
+    width:40px;height:40px;border-radius:12px;
+    background:linear-gradient(135deg,var(--pink-2),var(--blue-2));
+    margin-bottom:12px;
+  }
+  .why-card h3{font-size:16px;margin:0 0 6px;color:var(--ink);}
+  .why-card p{font-size:13.5px;color:var(--ink-soft);margin:0;line-height:1.5;}
+
+  /* FAQ accordion - iOS style */
+  .faq-item{
+    background:var(--white);
+    border-radius:var(--radius-sm);
+    margin-bottom:10px;
+    overflow:hidden;
+    box-shadow:0 6px 18px -10px rgba(150,130,200,0.25);
+  }
+  .faq-q{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:18px 20px;
+    cursor:pointer;
+    font-size:15px;
+    font-weight:600;
+    color:var(--ink);
+  }
+  .faq-q .plus{
+    width:24px;height:24px;border-radius:50%;
+    background:var(--blue-1);
+    display:flex;align-items:center;justify-content:center;
+    font-size:16px;color:var(--blue-3);
+    transition:transform .3s;
+    flex-shrink:0;
+  }
+  .faq-item.open .plus{transform:rotate(45deg);background:linear-gradient(135deg,var(--pink-3),var(--blue-3));color:#fff;}
+  .faq-a{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height .35s cubic-bezier(.22,1,.36,1);
+    padding:0 20px;
+    font-size:14px;
+    color:var(--ink-soft);
+    line-height:1.6;
+  }
+  .faq-item.open .faq-a{padding-bottom:18px;}
+
+  /* Final CTA / Telegram form */
+  .final-card{
+    background:linear-gradient(160deg,#fff,var(--pink-1) 0%, var(--blue-1) 100%);
+    border-radius:36px;
+    padding:48px 32px;
+    text-align:center;
+    box-shadow:var(--shadow-soft);
+    position:relative;
+    overflow:hidden;
+  }
+  .tg-icon{
+    width:64px;height:64px;margin:0 auto 18px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#34ABE9,#1C8ADB);
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 14px 30px -8px rgba(28,138,219,0.5);
+    animation: pop .6s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  .tg-icon svg{width:30px;height:30px;fill:#fff;}
+
+  form#leadForm{
+    max-width:380px;margin:28px auto 0;
+    display:flex;flex-direction:column;gap:12px;
+  }
+  form#leadForm input, form#leadForm textarea{
+    border:1px solid rgba(150,130,200,0.25);
+    border-radius:var(--radius-sm);
+    padding:14px 16px;
+    font-size:15px;
+    font-family:inherit;
+    background:#fff;
+    outline:none;
+    transition:border-color .2s, box-shadow .2s;
+  }
+  form#leadForm input:focus, form#leadForm textarea:focus{
+    border-color:var(--pink-3);
+    box-shadow:0 0 0 4px rgba(255,140,180,0.15);
+  }
+  form#leadForm textarea{resize:vertical;min-height:80px;}
+  .form-status{font-size:13px;margin-top:6px;min-height:18px;color:var(--ink-soft);}
+  .form-status.ok{color:#2DAA5C;font-weight:600;}
+  .form-status.err{color:#E0517A;font-weight:600;}
+
+  footer{
+    text-align:center;
+    padding:30px 0 50px;
+    font-size:13px;
+    color:var(--ink-soft);
+  }
+  footer .year{
+    font-weight:700;
+    background:linear-gradient(120deg,#FF8FB3,#8FCBFF);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+
+  @media (max-width:640px){
+    h1{font-size:32px;}
+    .stats{grid-template-columns:repeat(2,1fr);}
+    .checklist{grid-template-columns:1fr;}
+    .case-grid{grid-template-columns:1fr;}
+    .why-grid{grid-template-columns:1fr;}
+    .about-card{flex-direction:column;text-align:center;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-decor" aria-hidden="true">
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <div class="badge"><span class="dot"></span>Сайты, которые продают, а не просто существуют</div>
+    <h1>Сайты со встроенной воронкой продаж<br>и онлайн-записью для бизнеса</h1>
+    <p class="sub">Помогаю салонам красоты, экспертам, продюсерам и бизнесу получать больше заявок через сайт, который прогревает клиента до покупки.</p>
+    <button class="btn-primary" onclick="document.getElementById('lead').scrollIntoView({behavior:'smooth'})">
+      Получить консультацию →
+    </button>
+
+    <div class="phone-mock">
+      <div class="notch"></div>
+      <div class="bubble b-blue">Здравствуйте! Подскажите цену и сроки 🙂</div>
+      <div class="bubble b-pink">От 7 дней. Цена — после короткой консультации ✨</div>
+      <div class="bubble b-blue2">Хочу записаться на консультацию!</div>
+      <div class="cta-pill">Записаться через Telegram</div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST -->
+<section>
+  <div class="wrap">
+    <div class="section-card reveal">
+      <div class="stats">
+        <div class="stat-card"><div class="num">50+</div><div class="label">реализованных проектов</div></div>
+        <div class="stat-card"><div class="num">5 млн ₽</div><div class="label">выручки клиентам</div></div>
+        <div class="stat-card"><div class="num">5 лет</div><div class="label">обучения и практики</div></div>
+        <div class="stat-card"><div class="num">РФ</div><div class="label">работаю с бизнесом по всей России</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAIN -->
+<section>
+  <div class="wrap">
+    <div class="section-card reveal">
+      <div class="eyebrow">Проблема</div>
+      <h2>Почему клиенты интересуются, но не покупают?</h2>
+      <p class="lead">Большинство сайтов просто показывают информацию. Они не отвечают на вопросы клиента, не снимают возражения и не ведут человека к заявке.</p>
+      <div class="pain-card">
+        <strong>В результате:</strong>
+        <ul class="pain-list">
+          <li>Клиент уходит к конкурентам</li>
+          <li>Приходится отвечать на одни и те же вопросы</li>
+          <li>Реклама работает хуже</li>
+          <li>Теряются заявки</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUTION -->
+<section>
+  <div class="wrap">
+    <div class="section-card reveal">
+      <div class="eyebrow">Решение</div>
+      <h2>Я создаю сайты, которые прогревают клиента до обращения</h2>
+      <p class="lead">Каждый сайт проектируется как воронка продаж. На сайте заранее закрываются основные вопросы клиента, показываются преимущества бизнеса и создаётся понятный путь до заявки или записи.</p>
+      <div class="checklist">
+        <div class="check-item"><span class="tick">✓</span>Продающая структура</div>
+        <div class="check-item"><span class="tick">✓</span>Адаптация под телефон</div>
+        <div class="check-item"><span class="tick">✓</span>Формы заявок</div>
+        <div class="check-item"><span class="tick">✓</span>Онлайн-запись</div>
+        <div class="check-item"><span class="tick">✓</span>Прогрев клиента</div>
+        <div class="check-item"><span class="tick">✓</span>Подключение аналитики</div>
+        <div class="check-item"><span class="tick">✓</span>Техническая поддержка</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section>
+  <div class="wrap">
+    <div class="section-card reveal">
+      <div class="eyebrow">Обо мне</div>
+      <h2>Я не просто дизайнер. Я программист.</h2>
+      <div class="about-card">
+        <div class="avatar">М</div>
+        <div>
+          <p class="lead" style="margin-bottom:10px;">Меня зовут Милана. Я занимаюсь разработкой сайтов и помогаю бизнесу получать клиентов через интернет.</p>
+          <p class="lead" style="margin-bottom:10px;">Свой путь я начала с обучения и практики, постепенно перейдя от первых заказов к собственной команде специалистов.</p>
+          <p class="lead">Сегодня моя задача — не просто сделать красивый сайт, а сделать сайт, который помогает бизнесу продавать.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CASES -->
+<section>
+  <div class="wrap">
+    <div class="section-card reveal">
+      <div class="eyebrow">Кейсы</div>
+      <h2>Результаты клиентов</h2>
+      <p class="lead">Скриншоты сайтов, отзывы, рост обращений и показатели «до / после» — реальные цифры моих клиентов.</p>
+      <div class="case-grid">
+        <div class="case-card"><div class="ph"></div><div class="tag">Салон красоты</div><div class="res">+64% заявок за 30 дней</div></div>
+        <div class="case-card"><div class="ph"></div><div class="tag">Эксперт / коуч</div><div class="res">х2 записей на консультацию</div></div>
+        <div class="case-card"><div class="ph"></div><div class="tag">Косметология</div><div class="res">Онлайн-запись — 80% заявок</div></div>
+        <div class="case-card"><div class="ph"></div><div class="tag">Онлайн-школа</div><div class="res">+5 млн ₽ выручки клиенту</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AUDIENCE -->
+<section>
+  <div class="wrap">
+    <div class="section-card reveal">
+      <div class="eyebrow">Для кого</div>
+      <h2>Для кого мои сайты</h2>
+      <div class="pill-row">
+        <div class="pill">Салоны красоты</div>
+        <div class="pill">Косметологи</div>
+        <div class="pill">Медицинские центры</div>
+        <div class="pill">Продюсеры</div>
+        <div class="pill">Эксперты</div>
+        <div class="pill">Онлайн-школы</div>
+        <div class="pill">Малый бизнес</div>
+        <div class="pill">Услуги</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section>
+  <div class="wrap">
+    <div class="section-card reveal">
+      <div class="eyebrow">Почему</div>
+      <h2>Почему работают мои сайты</h2>
+      <div class="why-grid">
+        <div class="why-card"><div class="icon"></div><h3>Встроенная воронка</h3><p>Каждый блок ведёт клиента к заявке.</p></div>
+        <div class="why-card"><div class="icon"></div><h3>Прогрев клиента</h3><p>Закрываем вопросы до общения с менеджером.</p></div>
+        <div class="why-card"><div class="icon"></div><h3>Онлайн-запись</h3><p>Клиент может записаться в любое время.</p></div>
+        <div class="why-card"><div class="icon"></div><h3>Адаптация под мобильные</h3><p>Большинство заявок приходит со смартфонов.</p></div>
+        <div class="why-card"><div class="icon"></div><h3>Ответственность</h3><p>Не пропадаю после запуска проекта.</p></div>
+        <div class="why-card"><div class="icon"></div><h3>Программирование</h3><p>Понимаю не только дизайн, но и техническую часть.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section>
+  <div class="wrap">
+    <div class="section-card reveal">
+      <div class="eyebrow">FAQ</div>
+      <h2>Частые вопросы</h2>
+      <div class="faq">
+        <div class="faq-item">
+          <div class="faq-q">Сколько стоит сайт? <span class="plus">+</span></div>
+          <div class="faq-a">Стоимость зависит от задачи и обсуждается после консультации.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Сколько времени занимает разработка? <span class="plus">+</span></div>
+          <div class="faq-a">В среднем от 7 до 30 дней.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Можно ли добавить онлайн-запись? <span class="plus">+</span></div>
+          <div class="faq-a">Да, онлайн-запись подключается к любому сайту.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Поможете с текстами? <span class="plus">+</span></div>
+          <div class="faq-a">Да, помогаю с текстами и структурой сайта.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q">Будет ли сайт работать на телефоне? <span class="plus">+</span></div>
+          <div class="faq-a">Да, все сайты адаптированы под мобильные устройства.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section id="lead">
+  <div class="wrap">
+    <div class="final-card reveal">
+      <div class="tg-icon">
+        <svg viewBox="0 0 24 24"><path d="M9.04 16.13l-.39 5.46c.56 0 .8-.24 1.09-.53l2.62-2.51 5.43 3.98c1 .55 1.7.26 1.96-.92l3.56-16.7h.01c.31-1.45-.52-2.02-1.49-1.66L1.2 9.71c-1.41.55-1.39 1.34-.24 1.7l4.94 1.54L17.57 5.5c.5-.33.96-.15.58.18z"/></svg>
+      </div>
+      <h2>Если вам нужен не просто сайт, а инструмент для получения заявок</h2>
+      <p class="lead" style="margin:0 auto;">Оставьте заявку, и Милана свяжется с вами в Telegram для консультации по вашему проекту.</p>
+
+      <form id="leadForm">
+        <input type="text" id="leadName" placeholder="Ваше имя" required>
+        <input type="text" id="leadContact" placeholder="Telegram / телефон" required>
+        <textarea id="leadMessage" placeholder="Коротко о проекте (необязательно)"></textarea>
+        <button type="submit" class="btn-primary" style="justify-content:center;">Обсудить проект</button>
+        <div class="form-status" id="formStatus"></div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>© <span class="year" id="curYear">2026</span> Милана — сайты с воронкой продаж и онлайн-записью</footer>
+
+<script>
+  document.getElementById('curYear').textContent = new Date().getFullYear();
+
+  // ---- Reveal on scroll (надёжная версия без зависимости от IntersectionObserver) ----
+  const revealEls = document.querySelectorAll('.reveal');
+
+  function showReveal(){
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    revealEls.forEach((el)=>{
+      if(el.classList.contains('in')) return;
+      const r = el.getBoundingClientRect();
+      if(r.top < vh * 0.92 && r.bottom > 0){
+        el.classList.add('in');
+      }
+    });
+  }
+
+  window.addEventListener('scroll', showReveal, {passive:true});
+  window.addEventListener('resize', showReveal);
+  window.addEventListener('load', showReveal);
+  document.addEventListener('DOMContentLoaded', showReveal);
+  showReveal();
+
+  // Защитный таймер: если по какой-то причине элементы не показались сами — показываем всё принудительно
+  setTimeout(showReveal, 300);
+  setTimeout(()=>{ revealEls.forEach(el=>el.classList.add('in')); }, 2500);
+
+  // ---- FAQ accordion ----
+  document.querySelectorAll('.faq-item').forEach(item=>{
+    const q = item.querySelector('.faq-q');
+    const a = item.querySelector('.faq-a');
+    q.addEventListener('click', ()=>{
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(o=>{
+        o.classList.remove('open');
+        o.querySelector('.faq-a').style.maxHeight = null;
+      });
+      if(!isOpen){
+        item.classList.add('open');
+        a.style.maxHeight = a.scrollHeight + 'px';
+      }
+    });
+  });
+
+  // ====== TELEGRAM SETTINGS ======
+  // Оставьте здесь токен вашего Telegram-бота и chat_id, куда будут приходить заявки.
+  // Узнать chat_id можно у @userinfobot, токен бота — у @BotFather.
+  const TELEGRAM_BOT_TOKEN = "8949796625:AAEdnI-Yrfp3Y2dA89khtKUhRfeIicP4v2k";
+  const TELEGRAM_CHAT_ID   = "6648071138";
+
+  const form = document.getElementById('leadForm');
+  const status = document.getElementById('formStatus');
+
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+
+    const name = document.getElementById('leadName').value.trim();
+    const contact = document.getElementById('leadContact').value.trim();
+    const message = document.getElementById('leadMessage').value.trim();
+
+    if(!name || !contact){
+      status.textContent = 'Заполните имя и контакт';
+      status.className = 'form-status err';
+      return;
+    }
+
+    const text = `🌸 Новая заявка с сайта Миланы\n\nИмя: ${name}\nКонтакт: ${contact}\nСообщение: ${message || '—'}`;
+
+    status.textContent = 'Отправляем...';
+    status.className = 'form-status';
+
+    try{
+      const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+      const res = await fetch(url, {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({chat_id: TELEGRAM_CHAT_ID, text: text})
+      });
+      const data = await res.json();
+      if(data.ok){
+        status.textContent = 'Заявка отправлена! Я свяжусь с вами в Telegram 🌷';
+        status.className = 'form-status ok';
+        form.reset();
+      } else {
+        throw new Error('Telegram API error');
+      }
+    } catch(err){
+      status.textContent = 'Не удалось отправить. Проверьте токен бота и chat_id в коде.';
+      status.className = 'form-status err';
+    }
+  });
+</script>
+
+</body>
+</html>
